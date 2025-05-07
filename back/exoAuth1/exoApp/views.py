@@ -36,9 +36,9 @@ def inscription(request):
 @api_view(['POST'])
 def connexion(request):
     data = json.loads(request.body)
-    useremail = data.get('useremail')
-    userpassword = data.get('userpassword')
-    user = authenticate(request, email = useremail, password = userpassword)
+    email = data.get('email')
+    password = data.get('password')
+    user = authenticate(request, email = email, password = password)
     if user is not None:
         login(request, user)
         refresh = RefreshToken.for_user(user)
@@ -62,8 +62,8 @@ def get_user(request):
     except:
         return JsonResponse({'error' : 'erreur'})
     mon_user = {
-        'userfirstname' : user.userfirstname,
-        'userlastname' : user.userlastname,
+        'nom' : user.nom,
+        'prenom' : user.prenom,
         'id' : user.id,
     }
     return JsonResponse({'user' : mon_user})
@@ -81,12 +81,27 @@ def get_article_by_id(request, id):
 
 @api_view(['POST'])
 def create_article(request):
-    print('create article')
-    articles = ArticleSerializer(data = request.data)
-    if articles.is_valid():
-        articles.save()
-        return Response({'success' : 'Article created successfully'})
-    return Response(articles.errors)
+    # try:
+    #     auth = JWTAuthentication()
+    #     user, _ = auth.authenticate(request)
+    # except:
+    #     return JsonResponse({'error' : 'erreur'})
+    # mon_user = {
+    #     'nom' : user.nom,
+    #     'prenom' : user.prenom,
+    #     'id' : user.id,
+    # }
+    # articles = ArticleSerializer(data = request.data)
+    # if articles.is_valid():
+    #     articles.save()
+    #     print('article créé')
+    #     return Response({'success' : 'Article created successfully'})
+    # return JsonResponse(articles.errors, {'user' : mon_user})
+    user = request.user
+    
+    print(user.id)
+
+    return JsonResponse({'success' : 'Article created successfully'})
 
 
 @api_view(['DELETE'])

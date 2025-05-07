@@ -72,6 +72,7 @@ def get_user(request):
 #CRUD des articles
 def index(request):
     all_articles = ArticleSerializer(Article.objects.all(), many=True)
+    print('ici')
     return JsonResponse({'all_articles' : all_articles.data})
 
 def get_article_by_id(request, id):
@@ -81,27 +82,12 @@ def get_article_by_id(request, id):
 
 @api_view(['POST'])
 def create_article(request):
-    # try:
-    #     auth = JWTAuthentication()
-    #     user, _ = auth.authenticate(request)
-    # except:
-    #     return JsonResponse({'error' : 'erreur'})
-    # mon_user = {
-    #     'nom' : user.nom,
-    #     'prenom' : user.prenom,
-    #     'id' : user.id,
-    # }
-    # articles = ArticleSerializer(data = request.data)
-    # if articles.is_valid():
-    #     articles.save()
-    #     print('article créé')
-    #     return Response({'success' : 'Article created successfully'})
-    # return JsonResponse(articles.errors, {'user' : mon_user})
-    user = request.user
-    
-    print(user.id)
-
-    return JsonResponse({'success' : 'Article created successfully'})
+    articles = ArticleSerializer(data = request.data)
+    if articles.is_valid():
+        articles.save()
+        print('article créé')
+        return Response({'success' : 'Article created successfully'})
+    return JsonResponse(articles.errors ) #{'user' : mon_user} ne pas oublier de le passer dans le response quand on aura défini le user via le middleware
 
 
 @api_view(['DELETE'])
